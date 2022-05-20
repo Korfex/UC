@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="xmc.uc.zSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:xmc.uc"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="256" SnapsToDevicePixels="true" Margin="4">
+    <Grid>
+        <Border Height="2" BorderThickness="0" Background="{DynamicResource zBackgroundHighlight}" Margin="4"/>
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" x:Name="Value"/>
+                <ColumnDefinition MinWidth="16" Width="0.5*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <local:zButton Margin="0" Grid.Column="1" Height="24" Width="8" Text="" HorizontalAlignment="Left" MouseDown="zButton_MouseDown" MouseUp="zButton_MouseUp"/>
+    </Grid>
+</UserControl>
