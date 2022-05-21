@@ -38,7 +38,7 @@ namespace xmc.uc
             var p = new Pen(Foreground, PathThickness);
             var j = Data.GetRenderBounds(p);
             drawingContext.PushTransform(new TranslateTransform((ActualWidth - j.Size.Width) / 2, (ActualHeight - j.Size.Height) / 2));
-            drawingContext.DrawGeometry(null, p, Data);
+            drawingContext.DrawGeometry(Fill ? Foreground : null, p, Data);
 end:
             base.OnRender(drawingContext);
         }
@@ -47,6 +47,7 @@ end:
         public static readonly DependencyProperty
             HoveredBackgroundProperty = DependencyProperty.Register("HoveredBackground", typeof(Brush), typeof(zPButton), new PropertyMetadata(Brushes.Gray, new PropertyChangedCallback(OnValueChanged))),
             MDBackgroundProperty = DependencyProperty.Register("MDBackground", typeof(Brush), typeof(zPButton), new PropertyMetadata(Brushes.Gold, new PropertyChangedCallback(OnValueChanged))),
+            FillProperty = DependencyProperty.Register("Fill", typeof(bool), typeof(zPButton), new PropertyMetadata(false, new PropertyChangedCallback(OnValueChanged))),
             DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(zPButton), new PropertyMetadata((Geometry)null, new PropertyChangedCallback(OnValueChanged))),
             PathThicknessProperty = DependencyProperty.Register("PathThickness", typeof(double), typeof(zPButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged)));
 
@@ -64,6 +65,12 @@ end:
         {
             get => (double)GetValue(MDLevelProp);
             set => SetValue(MDLevelProp, value);
+        }
+
+        public bool Fill
+        {
+            get => (bool)GetValue(FillProperty);
+            set => SetValue(FillProperty, value);
         }
 
         public Brush HoveredBackground
@@ -113,6 +120,7 @@ end:
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             BeginAnimation(HoveredLevelProp, new DoubleAnimation(0, animationSpeed));
+            BeginAnimation(MDLevelProp, new DoubleAnimation(0, animationSpeed));
             base.OnMouseLeave(e);
         }
     }

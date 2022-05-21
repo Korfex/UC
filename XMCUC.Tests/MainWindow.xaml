@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <xmc:zPButton PathThickness="2"/>
+        <xmc:zPButton PathThickness="2" Data="M 0 0 40 0 30 10 20 30 30 0" Fill="True"/>
     </Grid>
 </Window>
