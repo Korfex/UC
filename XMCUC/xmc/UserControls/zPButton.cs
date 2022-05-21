@@ -11,22 +11,18 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static xmc.uc.zGlobals;
 
+
 namespace xmc.uc
 {
-    public partial class zLButton : Control
+    public class zPButton : Control
     {
-        public zLButton()
+        public zPButton()
         {
-            LayoutUpdated += (a, b) => UpdateFormattedText();
-            LayoutUpdated += (a, b) => InvalidateVisual();
         }
 
         public event RoutedEventHandler Click;
 
-        private static void OnValueChanged(object sender, DependencyPropertyChangedEventArgs e) => ((zLButton)sender).InvalidateVisual();
-        private static void OnTextChanged(object sender, DependencyPropertyChangedEventArgs e) => ((zLButton)sender).UpdateFormattedText();
-
-        public void UpdateFormattedText() => FormattedText = new FormattedText(Text == null ? "" : Text, CultureInfo.CurrentUICulture, FlowDirection, new Typeface(FontFamily, FontStyle, FontWeight, FontStretch), FontSize, Foreground);
+        private static void OnValueChanged(object sender, DependencyPropertyChangedEventArgs e) => ((zPButton)sender).InvalidateVisual();
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -37,26 +33,26 @@ namespace xmc.uc
             drawingContext.PushOpacity(MDLevel);
             drawingContext.DrawRectangle(MDBackground, null, new Rect(0, 0, ActualWidth, ActualHeight));
             drawingContext.Pop();
-            drawingContext.DrawText(FormattedText, new Point((ActualWidth - FormattedText.Width) / 2, (ActualHeight - FormattedText.Height) / 2));
+            if (Data == null)
+                goto end;
+            var p = new Pen(Foreground, PathThickness);
+            var j = Data.GetRenderBounds(p);
+            drawingContext.PushTransform(new TranslateTransform((ActualWidth - j.Size.Width) / 2, (ActualHeight - j.Size.Height) / 2));
+            drawingContext.DrawGeometry(null, p, Data);
+end:
             base.OnRender(drawingContext);
         }
 
 
         public static readonly DependencyProperty
-            HoveredBackgroundProperty = DependencyProperty.Register("HoveredBackground", typeof(Brush), typeof(zLButton), new PropertyMetadata(Brushes.Gray, new PropertyChangedCallback(OnValueChanged))),
-            MDBackgroundProperty = DependencyProperty.Register("MDBackground", typeof(Brush), typeof(zLButton), new PropertyMetadata(Brushes.Gold, new PropertyChangedCallback(OnValueChanged))),
-            TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(zLButton), new PropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+            HoveredBackgroundProperty = DependencyProperty.Register("HoveredBackground", typeof(Brush), typeof(zPButton), new PropertyMetadata(Brushes.Gray, new PropertyChangedCallback(OnValueChanged))),
+            MDBackgroundProperty = DependencyProperty.Register("MDBackground", typeof(Brush), typeof(zPButton), new PropertyMetadata(Brushes.Gold, new PropertyChangedCallback(OnValueChanged))),
+            DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(zPButton), new PropertyMetadata((Geometry)null, new PropertyChangedCallback(OnValueChanged))),
+            PathThicknessProperty = DependencyProperty.Register("PathThickness", typeof(double), typeof(zPButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged)));
 
         private static readonly DependencyProperty
-            HoveredLevelProp = DependencyProperty.Register("HoveredLevel", typeof(double), typeof(zLButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged))),
-            MDLevelProp = DependencyProperty.Register("MDLevel", typeof(double), typeof(zLButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged))),
-            FormattedTextProp = DependencyProperty.Register("FormattedText", typeof(FormattedText), typeof(zLButton), new PropertyMetadata((FormattedText)null, new PropertyChangedCallback(OnValueChanged)));
-
-        private FormattedText FormattedText
-        {
-            get => (FormattedText)GetValue(FormattedTextProp);
-            set => SetValue(FormattedTextProp, value);
-        }
+            HoveredLevelProp = DependencyProperty.Register("HoveredLevel", typeof(double), typeof(zPButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged))),
+            MDLevelProp = DependencyProperty.Register("MDLevel", typeof(double), typeof(zPButton), new PropertyMetadata(0d, new PropertyChangedCallback(OnValueChanged)));
 
         private double HoveredLevel
         {
@@ -82,10 +78,16 @@ namespace xmc.uc
             set => SetValue(MDBackgroundProperty, value);
         }
 
-        public string Text
+        public Geometry Data
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            get => (Geometry)GetValue(DataProperty);
+            set => SetValue(DataProperty, value);
+        }
+
+        public double PathThickness
+        {
+            get => (double)GetValue(PathThicknessProperty);
+            set => SetValue(PathThicknessProperty, value);
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -113,6 +115,5 @@ namespace xmc.uc
             BeginAnimation(HoveredLevelProp, new DoubleAnimation(0, animationSpeed));
             base.OnMouseLeave(e);
         }
-
     }
 }
