@@ -6,6 +6,8 @@ namespace xmc.uc
 {
     public static class zGlobals
     {
+        public static string zAnal = "Anal";
+
         public static Color color = ((SolidColorBrush)Application.Current.Resources["zColor"]).Color;
         public static Color hoverColor = ((SolidColorBrush)Application.Current.Resources["zHoverColor"]).Color;
         public static Color clickedColor = ((SolidColorBrush)Application.Current.Resources["zClickedColor"]).Color;
